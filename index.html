@@ -1,899 +1,257 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="theme-color" content="#070d1a"/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <title>CaloTot</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CaloTot - AI NutriJournal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #070d1a;
-            --bg-card: #0f172a;
-            --bg-subcard: #1e293b;
-            --border-color: #334155;
-            --text-main: #f8fafc;
+            --bg-dark: #070d1a;
+            --card-bg: #0f172a;
+            --accent: #6366f1;
             --text-muted: #94a3b8;
-            
-            --color-kcal: #60a5fa;
-            --color-p: #f87171;
-            --color-c: #fbbf24;
-            --color-g: #c084fc;
-            --color-f: #34d399;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        body { 
+            background-color: var(--bg-dark); 
+            color: white; 
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            padding-bottom: 90px;
-            min-height: 100vh;
-        }
-
-        /* Container & Grid Layout */
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 16px;
-        }
-
-        /* Header e Brand */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-            margin-bottom: 12px;
-        }
-
-        .brand {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 24px;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #60a5fa, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Cards */
-        .card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-
-        /* Macro pillole e indicatori */
-        .grid-macros {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .macro-box {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 10px 4px;
-            text-align: center;
-        }
-
-        .macro-title {
-            font-size: 9px;
-            text-transform: uppercase;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
-        }
-
-        .macro-value {
-            font-family: 'Syne', sans-serif;
-            font-size: 15px;
-            font-weight: 700;
-        }
-
-        .macro-bar-bg {
-            background: #1e293b;
-            height: 4px;
-            border-radius: 2px;
-            margin-top: 6px;
-            overflow: hidden;
-        }
-
-        .macro-bar-fill {
-            height: 100%;
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-
-        /* Sezione Data e Navigazione */
-        .date-navigator {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 8px 12px;
-        }
-
-        .nav-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 18px;
-            cursor: pointer;
-            padding: 4px 12px;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-
-        .nav-btn:hover {
-            color: var(--text-main);
-            background: var(--bg-subcard);
-        }
-
-        .current-date-lbl {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        /* Form di inserimento */
-        .ai-input-area {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .meal-select {
-            background: var(--bg-subcard);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 10px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            outline: none;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        .text-input-styled {
-            background: var(--bg-subcard);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            outline: none;
-            resize: none;
-            height: 70px;
-            transition: border-color 0.2s;
-        }
-
-        .text-input-styled:focus {
-            border-color: var(--color-kcal);
-        }
-
-        .btn-submit {
-            background: linear-gradient(135deg, #4f46e5, #6366f1);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .btn-submit:active {
-            opacity: 0.85;
-        }
-
-        /* Lista Pasti Raggruppati */
-        .meal-group-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin: 16px 0 8px 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .meal-item {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(51, 65, 85, 0.5);
-            border-radius: 12px;
-            padding: 10px 12px;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .meal-name {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-main);
-        }
-
-        .meal-macros-summary {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .meal-right {
-            text-align: right;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .meal-kcal {
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 13px;
-            color: var(--color-kcal);
-        }
-
-        .btn-delete {
-            background: none;
-            border: none;
-            color: #ef4444;
-            cursor: pointer;
-            font-size: 14px;
-            padding: 4px;
-        }
-
-        /* Sezione Calendario */
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .calendar-grid-days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-            text-align: center;
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-        }
-
-        .calendar-day-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            aspect-ratio: 1;
-            border-radius: 8px;
-            padding: 4px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .calendar-day-box:hover {
-            border-color: var(--text-muted);
-        }
-
-        .calendar-day-num {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .calendar-day-num.today {
-            color: var(--color-kcal);
-            font-weight: 800;
-        }
-
-        .calendar-day-kcal {
-            font-size: 8px;
-            font-weight: 700;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .calendar-day-dot {
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            margin: 0 auto;
-        }
-
-        /* Settings */
-        .settings-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-        }
-
-        .settings-label {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-main);
-        }
-
-        .input-number-styled {
-            background: var(--bg-subcard);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 8px;
-            width: 100px;
-            text-align: right;
-            outline: none;
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 12px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        /* Barra di Navigazione in basso (Bottom Bar) */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(12px);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            z-index: 1000;
-        }
-
-        .tab-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 10px;
-            font-weight: 500;
-            cursor: pointer;
-            gap: 4px;
-            width: 33%;
-        }
-
-        .tab-btn.active {
-            color: var(--color-kcal);
-        }
-
-        .tab-btn span.icon {
-            font-size: 18px;
-        }
-
-        /* Utility classes */
-        .hidden { display: none !important; }
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #10b981;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            z-index: 2000;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .btn-tab.active { color: white; background: rgba(99, 102, 241, 0.2); border-bottom: 2px solid var(--accent); }
+        .input-dark { background: #1e293b; border: 1px solid #334155; color: white; transition: all 0.2s; }
+        .input-dark:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
+        
+        /* Calendar Styling */
+        .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; border-radius: 8px; }
+        .cal-day.has-data { background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); }
     </style>
 </head>
-<body>
+<body class="safe-area-inset-bottom">
 
-    <div id="toast" class="toast">Notifica</div>
+    <nav class="fixed bottom-0 left-0 right-0 glass border-t border-white/5 px-6 py-3 flex justify-between items-center z-50">
+        <button onclick="showTab('journal')" id="btn-journal" class="btn-tab px-4 py-2 rounded-lg text-sm font-semibold active">Diario</button>
+        <button onclick="showTab('calendar')" id="btn-calendar" class="btn-tab px-4 py-2 rounded-lg text-sm font-semibold text-slate-400">Mese</button>
+        <button onclick="showTab('settings')" id="btn-settings" class="btn-tab px-4 py-2 rounded-lg text-sm font-semibold text-slate-400">Setting</button>
+    </nav>
 
-    <div class="container">
+    <main class="p-6 max-w-md mx-auto mb-24">
         
-        <header>
-            <div class="brand">CaloTot</div>
-            <div style="font-size: 10px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px;">DIARIO NUTRIZIONALE</div>
+        <header class="mb-8">
+            <h1 class="font-syne text-3xl mb-1 tracking-tighter italic">CALOTOT</h1>
+            <p id="display-date" class="text-xs text-slate-500 uppercase tracking-widest font-bold">OGGI</p>
+            
+            <div class="grid grid-cols-4 gap-2 mt-6">
+                <div class="glass p-3 rounded-2xl text-center">
+                    <span id="stat-p" class="block font-syne text-blue-400 text-lg">0</span>
+                    <span class="text-[9px] text-slate-500 uppercase">Prot</span>
+                </div>
+                <div class="glass p-3 rounded-2xl text-center">
+                    <span id="stat-c" class="block font-syne text-amber-400 text-lg">0</span>
+                    <span class="text-[9px] text-slate-500 uppercase">Carb</span>
+                </div>
+                <div class="glass p-3 rounded-2xl text-center">
+                    <span id="stat-f" class="block font-syne text-purple-400 text-lg">0</span>
+                    <span class="text-[9px] text-slate-500 uppercase">Fat</span>
+                </div>
+                <div class="glass p-3 rounded-2xl text-center">
+                    <span id="stat-fi" class="block font-syne text-emerald-400 text-lg">0</span>
+                    <span class="text-[9px] text-slate-500 uppercase">Fib</span>
+                </div>
+            </div>
+
+            <div class="mt-4 glass p-4 rounded-2xl">
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-xs text-slate-400 uppercase font-bold">Kcal Totali</span>
+                    <span class="font-syne text-xl"><span id="stat-kcal">0</span> <span class="text-xs text-slate-500 italic">/ <span id="target-display">1600</span></span></span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="kcal-progress" class="bg-indigo-500 h-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
         </header>
 
-        <div id="tab-journal" class="tab-view">
+        <section id="tab-journal" class="space-y-6">
+            <div class="glass p-5 rounded-3xl">
+                <textarea id="ai-input" placeholder="Cosa hai mangiato? (es. 100g riso e tonno)" class="w-full bg-transparent border-none text-white placeholder-slate-600 resize-none focus:ring-0 text-lg"></textarea>
+                <button onclick="analyzeFood()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 py-3 rounded-2xl font-bold transition-all transform active:scale-95 shadow-lg shadow-indigo-500/20">
+                    Aggiungi Pasto AI
+                </button>
+            </div>
+
+            <div id="meals-container" class="space-y-3">
+                </div>
+        </section>
+
+        <section id="tab-calendar" class="hidden animate-in fade-in">
+            <div class="glass p-5 rounded-3xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="cal-month-title" class="font-syne text-lg uppercase italic">Mese</h3>
+                </div>
+                <div class="grid grid-cols-7 gap-2 text-center text-[10px] text-slate-500 font-bold mb-4">
+                    <span>LU</span><span>MA</span><span>ME</span><span>GI</span><span>VE</span><span>SA</span><span>DO</span>
+                </div>
+                <div id="calendar-grid" class="grid grid-cols-7 gap-2"></div>
+            </div>
             
-            <div class="date-navigator">
-                <button class="nav-btn" onclick="adjustDay(-1)">&larr;</button>
-                <div class="current-date-lbl" id="current-date-display">...</div>
-                <button class="nav-btn" onclick="adjustDay(1)">&rarr;</button>
+            <button onclick="exportCSV()" class="w-full mt-6 border border-slate-700 text-slate-400 py-3 rounded-2xl text-sm font-bold">
+                ESPORTA DATI (CSV)
+            </button>
+        </section>
+
+        <section id="tab-settings" class="hidden space-y-6">
+            <div class="glass p-6 rounded-3xl">
+                <h3 class="font-syne text-lg mb-4 italic uppercase">Obiettivo Giornaliero</h3>
+                <label class="text-[10px] text-slate-500 uppercase font-bold">Calorie Target</label>
+                <input type="number" id="kcal-target-input" oninput="updateGoals()" class="w-full input-dark p-4 rounded-2xl text-2xl font-syne mb-4">
+                <p class="text-[11px] text-slate-400 leading-relaxed italic">
+                    * I macronutrienti vengono ricalcolati automaticamente basandosi su una ripartizione bilanciata (30% P, 40% C, 30% G).
+                </p>
             </div>
+            <button onclick="localStorage.clear(); location.reload();" class="w-full text-red-500/50 text-xs uppercase tracking-widest font-bold">Resetta tutti i dati</button>
+        </section>
 
-            <div class="grid-macros" id="progress-macros-container">
-                </div>
-
-            <div class="card">
-                <div class="ai-input-area">
-                    <div style="display: flex; gap: 8px;">
-                        <select id="meal-type-select" class="meal-select" style="flex: 2;">
-                            <option value="Colazione">☀️ Colazione</option>
-                            <option value="Spuntino">🍎 Spuntino</option>
-                            <option value="Pranzo">🍽️ Pranzo</option>
-                            <option value="Merenda">🫐 Merenda</option>
-                            <option value="Cena">🌙 Cena</option>
-                        </select>
-                    </div>
-                    <textarea id="ai-textarea" class="text-input-styled" placeholder="Scrivi cosa hai mangiato (es. 80g pasta, tonno, cucchiaio olio...)"></textarea>
-                    <button class="btn-submit" onclick="processAIInput()">Analizza con AI & Aggiungi</button>
-                </div>
-            </div>
-
-            <div id="meals-day-list">
-                </div>
-
-        </div>
-
-        <div id="tab-calendar" class="tab-view hidden">
-            <div class="card">
-                <div class="calendar-header">
-                    <button class="nav-btn" onclick="adjustCalendarMonth(-1)">&larr;</button>
-                    <div class="current-date-lbl" id="calendar-month-display" style="text-transform: capitalize;">...</div>
-                    <button class="nav-btn" onclick="adjustCalendarMonth(1)">&rarr;</button>
-                </div>
-
-                <div class="calendar-grid-days">
-                    <div>Lu</div><div>Ma</div><div>Me</div><div>Gi</div><div>Ve</div><div>Sa</div><div>Do</div>
-                </div>
-
-                <div class="calendar-grid" id="calendar-grid-days-container">
-                    </div>
-            </div>
-        </div>
-
-        <div id="tab-settings" class="tab-view hidden">
-            <div class="card">
-                <h3 style="font-family: 'Syne', sans-serif; margin-bottom: 14px; font-size: 16px;">Target Calorico</h3>
-                <div class="settings-row">
-                    <span class="settings-label">Calorie Giornaliere (Kcal)</span>
-                    <input type="number" id="settings-kcal-input" class="input-number-styled" value="1600" onchange="onSettingsChange()">
-                </div>
-                
-                <div style="background: rgba(7, 13, 26, 0.5); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 10px;">
-                    <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Macro calcolati in automatico</div>
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; text-align: center;">
-                        <div>
-                            <div style="font-size: 14px; font-weight: 800; color: var(--color-p);" id="calc-p">0g</div>
-                            <div style="font-size: 9px; color: var(--text-muted)">Prot</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 14px; font-weight: 800; color: var(--color-c);" id="calc-c">0g</div>
-                            <div style="font-size: 9px; color: var(--text-muted)">Carb</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 14px; font-weight: 800; color: var(--color-g);" id="calc-g">0g</div>
-                            <div style="font-size: 9px; color: var(--text-muted)">Gras</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 14px; font-weight: 800; color: var(--color-f);" id="calc-f">0g</div>
-                            <div style="font-size: 9px; color: var(--text-muted)">Fibr</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 style="font-family: 'Syne', sans-serif; margin-bottom: 14px; font-size: 16px;">Dati & Backup</h3>
-                <button class="btn-submit" style="width: 100%; margin-bottom: 8px; background: linear-gradient(135deg, #059669, #10b981);" onclick="exportDataCSV()">Esporta Diario (CSV)</button>
-                <button class="btn-danger" onclick="clearData()">Inizializza Database</button>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="bottom-nav">
-        <button class="tab-btn active" onclick="switchView('journal', this)">
-            <span class="icon">🍽️</span>
-            <span>Diario</span>
-        </button>
-        <button class="tab-btn" onclick="switchView('calendar', this)">
-            <span class="icon">📅</span>
-            <span>Calendario</span>
-        </button>
-        <button class="tab-btn" onclick="switchView('settings', this)">
-            <span class="icon">⚙️</span>
-            <span>Opzioni</span>
-        </button>
-    </div>
+    </main>
 
     <script>
-        // --- DATA STORE ---
-        let state = {
-            date: new Date().toISOString().split("T")[0],
-            calendarViewDate: new Date(),
-            goals: { kcal: 1600, protein: 112, carbs: 172, fat: 52, fiber: 35 },
-            days: {}
+        // --- LOGICA E STATO ---
+        let state = JSON.parse(localStorage.getItem('calotot_v1')) || {
+            goals: { kcal: 1600, p: 120, c: 160, f: 53, fi: 25 },
+            history: {} // Struttura: { "2023-10-27": [pasti] }
         };
 
-        const MEALS = ["Colazione", "Spuntino", "Pranzo", "Merenda", "Cena"];
-        const ICONS = { Colazione: "☀️", Spuntino: "🍎", Pranzo: "🍽️", Merenda: "🫐", Cena: "🌙" };
+        const today = new Date().toISOString().split('T')[0];
 
-        // --- SISTEMA DI SALVATAGGIO IN LOCAL STORAGE ---
-        function loadState() {
-            const savedDays = localStorage.getItem("calotot_days");
-            const savedGoals = localStorage.getItem("calotot_goals");
-            if (savedDays) state.days = JSON.parse(savedDays);
-            if (savedGoals) {
-                state.goals = JSON.parse(savedGoals);
-            } else {
-                state.goals = calcMacrosFromKcal(1600);
-            }
-        }
+        function save() { localStorage.setItem('calotot_v1', JSON.stringify(state)); render(); }
 
-        function saveState() {
-            localStorage.setItem("calotot_days", JSON.stringify(state.days));
-            localStorage.setItem("calotot_goals", JSON.stringify(state.goals));
-        }
-
-        // --- CALCOLO AUTOMATICO MACRONUTRIENTI ---
-        function calcMacrosFromKcal(kcal) {
-            return {
-                kcal: kcal,
-                protein: Math.round(kcal * 0.28 / 4),  // 28% Prot
-                carbs: Math.round(kcal * 0.43 / 4),    // 43% Carb
-                fat: Math.round(kcal * 0.29 / 9),      // 29% Gras
-                fiber: Math.round(kcal / 1000 * 22)    // ~22g per 1000kcal
+        function updateGoals() {
+            const k = parseInt(document.getElementById('kcal-target-input').value) || 1600;
+            state.goals = {
+                kcal: k,
+                p: Math.round((k * 0.30) / 4),
+                c: Math.round((k * 0.40) / 4),
+                f: Math.round((k * 0.30) / 9),
+                fi: Math.round((k / 1000) * 14)
             };
+            save();
         }
 
-        // --- SIMULATORE AI DI NUTRIZIONALE ---
-        function mockAIAnalysis(text, mealType) {
-            const textLower = text.toLowerCase();
-            let parsed = { name: text, kcal: 150, protein: 10, carbs: 15, fat: 5, fiber: 2 };
+        function analyzeFood() {
+            const input = document.getElementById('ai-input');
+            if(!input.value) return;
 
-            // Calcoli basati su parole chiave comuni per una simulazione AI plausibile
-            if (textLower.includes("pasta") || textLower.includes("riso")) {
-                parsed.kcal = 350; parsed.protein = 10; parsed.carbs = 70; parsed.fat = 2; parsed.fiber = 3;
-            } else if (textLower.includes("pollo") || textLower.includes("tacchino") || textLower.includes("carne")) {
-                parsed.kcal = 180; parsed.protein = 30; parsed.carbs = 0; parsed.fat = 6; parsed.fiber = 0;
-            } else if (textLower.includes("tonno") || textLower.includes("pesce") || textLower.includes("salmone")) {
-                parsed.kcal = 200; parsed.protein = 25; parsed.carbs = 0; parsed.fat = 10; parsed.fiber = 0;
-            } else if (textLower.includes("mela") || textLower.includes("banana") || textLower.includes("frutta")) {
-                parsed.kcal = 80; parsed.protein = 1; parsed.carbs = 20; parsed.fat = 0; parsed.fiber = 3;
-            } else if (textLower.includes("uova") || textLower.includes("uovo")) {
-                parsed.kcal = 155; parsed.protein = 13; parsed.carbs = 1; parsed.fat = 11; parsed.fiber = 0;
-            } else if (textLower.includes("pane") || textLower.includes("fetta")) {
-                parsed.kcal = 250; parsed.protein = 8; parsed.carbs = 50; parsed.fat = 3; parsed.fiber = 4;
-            } else if (textLower.includes("olio")) {
-                parsed.kcal = 90; parsed.protein = 0; parsed.carbs = 0; parsed.fat = 10; parsed.fiber = 0;
-            }
+            // Simulazione AI (In un caso reale qui chiameresti GPT-4)
+            const mockNames = ["Pollo e Riso", "Pasta al Pesto", "Omelette", "Yogurt e Noci"];
+            const entry = {
+                id: Date.now(),
+                name: input.value.length > 25 ? input.value.substring(0, 25) + "..." : input.value,
+                kcal: Math.floor(Math.random() * 400) + 200,
+                p: Math.floor(Math.random() * 25) + 5,
+                c: Math.floor(Math.random() * 40) + 10,
+                f: Math.floor(Math.random() * 15) + 5,
+                fi: Math.floor(Math.random() * 6),
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
 
-            // Variazione e aggiunta del pasto effettivo scritto
-            parsed.name = text.length > 40 ? text.substring(0, 37) + "..." : text;
-            return parsed;
+            if(!state.history[today]) state.history[today] = [];
+            state.history[today].push(entry);
+            input.value = "";
+            save();
         }
 
-        // --- UTILITY GRAPHICS & UTILS ---
-        function toast(msg) {
-            const t = document.getElementById("toast");
-            t.innerText = msg;
-            t.style.opacity = 1;
-            setTimeout(() => t.style.opacity = 0, 2000);
+        function deleteMeal(id) {
+            state.history[today] = state.history[today].filter(m => m.id !== id);
+            save();
         }
 
-        function formatDisplayDate(dateStr) {
-            const date = new Date(dateStr + 'T12:00:00');
-            return date.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
-        }
-
-        function getDayTotals(dateStr) {
-            const dayData = state.days[dateStr];
-            const totals = { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
-            if (!dayData || !dayData.meals) return totals;
-
-            Object.values(dayData.meals).flat().forEach(item => {
-                totals.kcal += item.kcal || 0;
-                totals.protein += item.protein || 0;
-                totals.carbs += item.carbs || 0;
-                totals.fat += item.fat || 0;
-                totals.fiber += item.fiber || 0;
+        // --- UI RENDERING ---
+        function showTab(tab) {
+            ['journal', 'calendar', 'settings'].forEach(t => {
+                document.getElementById('tab-' + t).classList.add('hidden');
+                document.getElementById('btn-' + t).classList.remove('active', 'text-white');
+                document.getElementById('btn-' + t).classList.add('text-slate-400');
             });
-            return totals;
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            document.getElementById('btn-' + tab).classList.add('active', 'text-white');
+            if(tab === 'calendar') renderCalendar();
         }
 
-        // --- NAVIGATION ---
-        function switchView(viewName, button) {
-            document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
-            document.getElementById(`tab-${viewName}`).classList.remove('hidden');
+        function render() {
+            const dayData = state.history[today] || [];
+            const totals = dayData.reduce((acc, curr) => ({
+                k: acc.k + curr.kcal, p: acc.p + curr.p, c: acc.c + curr.c, f: acc.f + curr.f, fi: acc.fi + curr.fi
+            }), {k:0, p:0, c:0, f:0, fi:0});
 
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if (button) button.classList.add('active');
-
-            if (viewName === 'calendar') renderCalendar();
-        }
-
-        function adjustDay(dir) {
-            const dt = new Date(state.date + 'T12:00:00');
-            dt.setDate(dt.getDate() + dir);
-            state.date = dt.toISOString().split('T')[0];
-            renderAll();
-        }
-
-        // --- RENDERING JOURNAL ---
-        function renderAll() {
-            loadState();
+            // Update Stats
+            document.getElementById('stat-kcal').innerText = totals.k;
+            document.getElementById('stat-p').innerText = totals.p;
+            document.getElementById('stat-c').innerText = totals.c;
+            document.getElementById('stat-f').innerText = totals.f;
+            document.getElementById('stat-fi').innerText = totals.fi;
+            document.getElementById('target-display').innerText = state.goals.kcal;
+            document.getElementById('kcal-target-input').value = state.goals.kcal;
             
-            // Imposta testo della data corrente
-            document.getElementById("current-date-display").innerText = formatDisplayDate(state.date);
+            const perc = Math.min((totals.k / state.goals.kcal) * 100, 100);
+            document.getElementById('kcal-progress').style.width = perc + "%";
 
-            // Calcola totali odierni
-            const totals = getDayTotals(state.date);
-            const goals = state.goals;
-
-            // Render dei Macro-box con barra di avanzamento
-            const macrosDef = [
-                { label: 'Calorie', val: totals.kcal, target: goals.kcal, unit: 'kcal', color: 'var(--color-kcal)' },
-                { label: 'Proteine', val: totals.protein, target: goals.protein, unit: 'g', color: 'var(--color-p)' },
-                { label: 'Carbo', val: totals.carbs, target: goals.carbs, unit: 'g', color: 'var(--color-c)' },
-                { label: 'Grassi', val: totals.fat, target: goals.fat, unit: 'g', color: 'var(--color-g)' },
-                { label: 'Fibre', val: totals.fiber, target: goals.fiber, unit: 'g', color: 'var(--color-f)' }
-            ];
-
-            const container = document.getElementById("progress-macros-container");
-            container.innerHTML = macrosDef.map(m => {
-                const percent = Math.min((m.val / m.target) * 100, 100);
-                return `
-                    <div class="macro-box">
-                        <div class="macro-title">${m.label}</div>
-                        <div class="macro-value" style="color: ${m.color}">${m.val}<span style="font-size: 9px; font-weight:400; color: var(--text-muted);">/${m.target}${m.unit}</span></div>
-                        <div class="macro-bar-bg">
-                            <div class="macro-bar-fill" style="width: ${percent}%; background-color: ${m.color};"></div>
-                        </div>
+            // Render Meals
+            const container = document.getElementById('meals-container');
+            container.innerHTML = dayData.map(m => `
+                <div class="glass p-4 rounded-2xl flex justify-between items-center animate-in slide-in-from-bottom-2">
+                    <div>
+                        <div class="text-[10px] text-indigo-400 font-bold uppercase mb-1">${m.time}</div>
+                        <div class="font-bold text-sm text-white">${m.name}</div>
+                        <div class="text-[10px] text-slate-500 mt-1">P: ${m.p}g · C: ${m.c}g · F: ${m.f}g</div>
                     </div>
-                `;
-            }).join('');
-
-            // Mostra Lista Pasti del giorno
-            const listContainer = document.getElementById("meals-day-list");
-            listContainer.innerHTML = "";
-
-            const dayData = state.days[state.date] || { meals: {} };
-            
-            MEALS.forEach(mealKey => {
-                const items = dayData.meals[mealKey] || [];
-                if (items.length > 0 || MEALS.indexOf(mealKey) > -1) {
-                    // Crea intestazione pasto
-                    const mealHeader = document.createElement("div");
-                    mealHeader.className = "meal-group-title";
-                    mealHeader.innerHTML = `<span>${ICONS[mealKey]}</span> <span>${mealKey}</span>`;
-                    listContainer.appendChild(mealHeader);
-
-                    if (items.length === 0) {
-                        const emptyElement = document.createElement("div");
-                        emptyElement.style = "padding: 8px 12px; font-size: 11px; color: var(--text-muted); font-style: italic;";
-                        emptyElement.innerText = "Nessun alimento inserito";
-                        listContainer.appendChild(emptyElement);
-                    } else {
-                        items.forEach((item, index) => {
-                            const row = document.createElement("div");
-                            row.className = "meal-item";
-                            row.innerHTML = `
-                                <div>
-                                    <div class="meal-name">${item.name}</div>
-                                    <div class="meal-macros-summary">P: ${item.protein}g | C: ${item.carbs}g | G: ${item.fat}g | F: ${item.fiber}g</div>
-                                </div>
-                                <div class="meal-right">
-                                    <div class="meal-kcal">${item.kcal} kcal</div>
-                                    <button class="btn-delete" onclick="removeItem('${mealKey}', ${index})">✕</button>
-                                </div>
-                            `;
-                            listContainer.appendChild(row);
-                        });
-                    }
-                }
-            });
-
-            // Sincronizza UI Settings
-            document.getElementById("settings-kcal-input").value = state.goals.kcal;
-            document.getElementById("calc-p").innerText = state.goals.protein + "g";
-            document.getElementById("calc-c").innerText = state.goals.carbs + "g";
-            document.getElementById("calc-g").innerText = state.goals.fat + "g";
-            document.getElementById("calc-f").innerText = state.goals.fiber + "g";
-        }
-
-        // --- AGGIUNTA E RIMOZIONE PASTI ---
-        function processAIInput() {
-            const textEl = document.getElementById("ai-textarea");
-            const text = textEl.value.trim();
-            if (!text) {
-                toast("Inserisci del testo prima!");
-                return;
-            }
-
-            const mealType = document.getElementById("meal-type-select").value;
-            const analyzedItem = mockAIAnalysis(text, mealType);
-
-            if (!state.days[state.date]) {
-                state.days[state.date] = { meals: {} };
-            }
-            if (!state.days[state.date].meals[mealType]) {
-                state.days[state.date].meals[mealType] = [];
-            }
-
-            state.days[state.date].meals[mealType].push(analyzedItem);
-            saveState();
-            textEl.value = "";
-            toast("Pasto aggiunto con successo!");
-            renderAll();
-        }
-
-        function removeItem(mealKey, index) {
-            if (state.days[state.date] && state.days[state.date].meals[mealKey]) {
-                state.days[state.date].meals[mealKey].splice(index, 1);
-                saveState();
-                toast("Alimento rimosso");
-                renderAll();
-            }
-        }
-
-        // --- SISTEMA CALENDARIO ---
-        function adjustCalendarMonth(dir) {
-            state.calendarViewDate.setMonth(state.calendarViewDate.getMonth() + dir);
-            renderCalendar();
+                    <div class="text-right flex items-center gap-4">
+                        <div class="font-syne text-lg">${m.kcal}</div>
+                        <button onclick="deleteMeal(${m.id})" class="text-slate-700 hover:text-red-500 transition">✕</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function renderCalendar() {
-            const container = document.getElementById("calendar-grid-days-container");
-            const label = document.getElementById("calendar-month-display");
-            container.innerHTML = "";
-
-            const yr = state.calendarViewDate.getFullYear();
-            const mo = state.calendarViewDate.getMonth();
-
-            label.innerText = state.calendarViewDate.toLocaleDateString("it-IT", { month: "long", year: "numeric" });
-
-            // Primo giorno del mese
-            const firstDayIndex = new Date(yr, mo, 1).getDay(); // Dom=0, Lun=1...
-            const offset = firstDayIndex === 0 ? 6 : firstDayIndex - 1; // Allinea a Lunedì
+            const grid = document.getElementById('calendar-grid');
+            const now = new Date();
+            document.getElementById('cal-month-title').innerText = now.toLocaleDateString('it-IT', {month:'long', year:'numeric'});
             
-            // Giorni totali nel mese
-            const totalDaysInMonth = new Date(yr, mo + 1, 0).getDate();
-
-            // Riempi offset vuoti
-            for (let i = 0; i < offset; i++) {
-                const empty = document.createElement("div");
-                container.appendChild(empty);
-            }
-
-            // Genera i giorni
-            const todayStr = new Date().toISOString().split("T")[0];
-            for (let day = 1; day <= totalDaysInMonth; day++) {
-                const dayDateStr = `${yr}-${String(mo + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const totals = getDayTotals(dayDateStr);
-
-                const dayBox = document.createElement("div");
-                dayBox.className = "calendar-day-box";
-                dayBox.onclick = () => {
-                    state.date = dayDateStr;
-                    renderAll();
-                    switchView('journal');
-                };
-
-                const isToday = dayDateStr === todayStr;
-                const percent = Math.min((totals.kcal / state.goals.kcal) * 100, 100);
-
-                let calorieIndicator = "";
-                let indicatorColor = "#334155";
-                if (totals.kcal > 0) {
-                    const overLimit = totals.kcal > state.goals.kcal;
-                    indicatorColor = overLimit ? "#ef4444" : "#10b981";
-                    calorieIndicator = `<div class="calendar-day-kcal" style="color: ${indicatorColor}">${totals.kcal}</div>`;
-                }
-
-                dayBox.innerHTML = `
-                    <div class="calendar-day-num ${isToday ? 'today' : ''}">${day}</div>
-                    ${calorieIndicator}
-                    ${totals.kcal > 0 ? `<div class="calendar-day-dot" style="background-color: ${indicatorColor}"></div>` : ''}
+            grid.innerHTML = "";
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            
+            for(let i=1; i<=daysInMonth; i++) {
+                const dStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+                const hasData = state.history[dStr] && state.history[dStr].length > 0;
+                grid.innerHTML += `
+                    <div class="cal-day ${hasData ? 'has-data' : 'text-slate-700'}">
+                        ${i}
+                        ${hasData ? '<div class="w-1 h-1 bg-indigo-500 rounded-full mt-1"></div>' : ''}
+                    </div>
                 `;
-                container.appendChild(dayBox);
             }
         }
 
-        // --- IMPOSTAZIONI ---
-        function onSettingsChange() {
-            const kcalVal = parseInt(document.getElementById("settings-kcal-input").value) || 1600;
-            state.goals = calcMacrosFromKcal(kcalVal);
-            saveState();
-            renderAll();
-        }
-
-        function clearData() {
-            if (confirm("Sei sicuro di voler resettare tutti i dati del diario? L'operazione non è reversibile.")) {
-                state.days = {};
-                state.goals = calcMacrosFromKcal(1600);
-                saveState();
-                renderAll();
-                toast("Database formattato");
-            }
-        }
-
-        // --- ESPORTAZIONE DATI IN FORMATO CSV ---
-        function exportDataCSV() {
-            let csvRows = [["Data", "Pasto", "Alimento", "Kcal", "Proteine(g)", "Carboidrati(g)", "Grassi(g)", "Fibre(g)"]];
-            
-            Object.keys(state.days).sort().forEach(date => {
-                const mealsObj = state.days[date].meals || {};
-                Object.keys(mealsObj).forEach(mealType => {
-                    mealsObj[mealType].forEach(item => {
-                        csvRows.push([
-                            date,
-                            mealType,
-                            item.name.replace(/"/g, '""'),
-                            item.kcal,
-                            item.protein,
-                            item.carbs,
-                            item.fat,
-                            item.fiber
-                        ]);
-                    });
+        function exportCSV() {
+            let csv = "Data,Pasto,Kcal,Proteine,Carbi,Grassi\n";
+            Object.keys(state.history).forEach(date => {
+                state.history[date].forEach(m => {
+                    csv += `${date},${m.name},${m.kcal},${m.p},${m.c},${m.f}\n`;
                 });
             });
-
-            const csvString = csvRows.map(row => row.map(v => `"${v}"`).join(",")).join("\n");
-            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvString], { type: "text/csv;charset=utf-8;" });
-            const url = URL.createObjectURL(blob);
-            
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = `calotot_export_${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
-            URL.revokeObjectURL(url);
-            toast("Esportazione CSV completata!");
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'calotot_export.csv');
+            a.click();
         }
 
-        // --- INITIALIZE APP ---
-        loadState();
-        renderAll();
+        // Init
+        document.getElementById('display-date').innerText = new Date().toLocaleDateString('it-IT', {weekday: 'short', day: 'numeric', month: 'short'}).toUpperCase();
+        render();
     </script>
 </body>
 </html>
