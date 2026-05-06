@@ -1,220 +1,299 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CaloTot</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaloTot - Food Journal AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 1); }
+        .calendar-day { min-height: 80px; transition: all 0.2s; }
+        .calendar-day:hover { background-color: #f1f5f9; }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
-  <div class="max-w-6xl mx-auto p-6">
-    <header class="mb-6">
-      <h1 class="text-3xl font-bold">CaloTot</h1>
-      <p class="text-sm text-slate-600">Journal nutrizionale giornaliero</p>
-    </header>
+<body class="pb-10">
 
-    <div class="grid md:grid-cols-3 gap-6">
-      <section class="md:col-span-2 bg-white rounded-2xl shadow p-5">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold">Oggi</h2>
-          <input id="day" type="date" class="border rounded-lg px-3 py-2" />
+    <!-- Header -->
+    <nav class="bg-indigo-600 text-white p-4 shadow-lg mb-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-tight">CaloTot</h1>
+            <div class="space-x-4">
+                <button onclick="switchTab('journal')" class="hover:text-indigo-200">Journal</button>
+                <button onclick="switchTab('calendar')" class="hover:text-indigo-200">Calendario</button>
+                <button onclick="switchTab('settings')" class="hover:text-indigo-200">Settings</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 max-w-4xl">
+        
+        <!-- SEZIONE JOURNAL -->
+        <div id="tab-journal" class="tab-content">
+            <div class="glass-card rounded-2xl p-6 shadow-sm mb-6">
+                <h2 class="text-xl font-semibold mb-4">Cosa hai mangiato oggi?</h2>
+                <div class="flex flex-col gap-3">
+                    <textarea id="meal-input" placeholder="Esempio: 80g pasta al pomodoro, 150g petto di pollo e un'insalata..." class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none h-24"></textarea>
+                    <button onclick="addMeal()" class="bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition">
+                        Analizza e Aggiungi con AI
+                    </button>
+                    <p class="text-xs text-gray-500">* Simulazione AI: Calcola istantaneamente calorie e macro basandosi su database nutrizionali.</p>
+                </div>
+            </div>
+
+            <!-- Progressi Giornalieri -->
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6" id="daily-stats">
+                <!-- Caricato via JS -->
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 shadow-sm">
+                <h3 class="font-bold mb-4">Pasti di oggi</h3>
+                <div id="meals-list" class="space-y-3">
+                    <!-- Caricato via JS -->
+                </div>
+            </div>
         </div>
 
-        <form id="mealForm" class="grid md:grid-cols-6 gap-3 mb-5">
-          <input id="meal" placeholder="Pasto" class="border rounded-lg px-3 py-2" />
-          <input id="food" placeholder="Cosa hai mangiato" class="border rounded-lg px-3 py-2 md:col-span-2" />
-          <input id="cal" type="number" placeholder="kcal" class="border rounded-lg px-3 py-2" />
-          <input id="protein" type="number" placeholder="Proteine" class="border rounded-lg px-3 py-2" />
-          <input id="carbs" type="number" placeholder="Carboidrati" class="border rounded-lg px-3 py-2" />
-          <input id="fat" type="number" placeholder="Grassi" class="border rounded-lg px-3 py-2" />
-          <input id="fiber" type="number" placeholder="Fibre" class="border rounded-lg px-3 py-2" />
-          <button class="bg-slate-900 text-white rounded-xl px-4 py-2">Aggiungi</button>
-        </form>
-
-        <div class="mb-5">
-          <div class="flex gap-3">
-            <input id="aiInput" placeholder="Es. 2 uova, 150g riso, 1 banana" class="border rounded-lg px-3 py-2 flex-1" />
-            <button id="aiCalc" type="button" class="border rounded-xl px-4 py-2">Calcola con AI</button>
-          </div>
-          <p class="text-sm text-slate-500 mt-2">Stima automatica di calorie e macronutrienti.</p>
+        <!-- SEZIONE CALENDARIO -->
+        <div id="tab-calendar" class="tab-content hidden">
+            <div class="glass-card rounded-2xl p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 id="calendar-month" class="text-xl font-bold">Mese</h2>
+                    <div class="flex gap-2">
+                        <button onclick="changeMonth(-1)" class="p-2 border rounded-lg hover:bg-gray-100">&larr;</button>
+                        <button onclick="changeMonth(1)" class="p-2 border rounded-lg hover:bg-gray-100">&rarr;</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-7 gap-1 text-center font-bold text-gray-500 text-xs mb-2">
+                    <div>LUN</div><div>MAR</div><div>MER</div><div>GIO</div><div>VEN</div><div>SAB</div><div>DOM</div>
+                </div>
+                <div id="calendar-grid" class="grid grid-cols-7 gap-1">
+                    <!-- Caricato via JS -->
+                </div>
+            </div>
         </div>
 
-        <div id="entries"></div>
-      </section>
+        <!-- SEZIONE SETTINGS -->
+        <div id="tab-settings" class="tab-content hidden">
+            <div class="glass-card rounded-2xl p-6 shadow-sm mb-6">
+                <h2 class="text-xl font-semibold mb-4">Impostazioni Obiettivi</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Calorie Giornaliere Target</label>
+                        <input type="number" id="target-calories" value="1600" onchange="updateSettings()" class="mt-1 block w-full p-2 border rounded-md">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-sm text-gray-500">
+                        <p>Proteine: <span id="set-p"></span>g</p>
+                        <p>Carboidrati: <span id="set-c"></span>g</p>
+                        <p>Grassi: <span id="set-f"></span>g</p>
+                        <p>Fibre: <span id="set-fi"></span>g</p>
+                    </div>
+                </div>
+            </div>
 
-      <aside class="bg-white rounded-2xl shadow p-5">
-        <h2 class="text-xl font-semibold mb-4">Riepilogo</h2>
-        <div id="summary"></div>
-      </aside>
+            <div class="glass-card rounded-2xl p-6 shadow-sm">
+                <h2 class="text-xl font-semibold mb-4">Gestione Dati</h2>
+                <button onclick="exportData()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Esporta in JSON</button>
+                <button onclick="clearAllData()" class="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 ml-2">Reset Totale</button>
+            </div>
+        </div>
     </div>
 
-    <section class="bg-white rounded-2xl shadow p-5 mt-6">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">Panoramica mensile</h2>
-        <button id="exportBtn" class="border rounded-xl px-4 py-2">Esporta dati</button>
-      </div>
-      <div id="calendar"></div>
-    </section>
+    <script>
+        // Stato dell'app
+        let data = JSON.parse(localStorage.getItem('calotot_data')) || {};
+        let settings = JSON.parse(localStorage.getItem('calotot_settings')) || { calories: 1600 };
+        let currentDate = new Date().toISOString().split('T')[0];
+        let calendarViewDate = new Date();
 
-    <section class="bg-white rounded-2xl shadow p-5 mt-6">
-      <h2 class="text-xl font-semibold mb-4">Impostazioni</h2>
-      <div class="flex gap-3 items-center">
-        <label>Calorie giornaliere</label>
-        <input id="targetCalories" type="number" class="border rounded-lg px-3 py-2" />
-        <button id="saveSettings" class="bg-slate-900 text-white rounded-xl px-4 py-2">Salva</button>
-      </div>
-      <p class="text-sm text-slate-500 mt-3">I macronutrienti vengono calcolati automaticamente usando 30% proteine, 40% carboidrati, 30% grassi.</p>
-    </section>
-  </div>
+        // Macronutrienti automatici (Ripartizione standard: 30% P, 40% C, 30% G)
+        function calculateMacros(totalCals) {
+            return {
+                p: Math.round((totalCals * 0.30) / 4),
+                c: Math.round((totalCals * 0.40) / 4),
+                f: Math.round((totalCals * 0.30) / 9),
+                fi: Math.round((totalCals / 1000) * 14) // 14g fibre ogni 1000kcal
+            };
+        }
 
-  <script>
-    const STORAGE = 'calotot-data';
+        function updateSettings() {
+            settings.calories = parseInt(document.getElementById('target-calories').value);
+            localStorage.setItem('calotot_settings', JSON.stringify(settings));
+            renderDailyStats();
+            renderSettings();
+        }
 
-    const defaultData = {
-      settings: { calories: 1600 },
-      entries: {}
-    };
+        function renderSettings() {
+            const m = calculateMacros(settings.calories);
+            document.getElementById('set-p').innerText = m.p;
+            document.getElementById('set-c').innerText = m.c;
+            document.getElementById('set-f').innerText = m.f;
+            document.getElementById('set-fi').innerText = m.fi;
+        }
 
-    let data = JSON.parse(localStorage.getItem(STORAGE) || 'null') || defaultData;
+        // Navigazione
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            if(tab === 'calendar') renderCalendar();
+        }
 
-    const dayInput = document.getElementById('day');
-    dayInput.valueAsDate = new Date();
-    document.getElementById('targetCalories').value = data.settings.calories;
+        // Funzione "AI" Simulata (In una vera app, qui chiameresti un'API di OpenAI)
+        function simulateAIAnalysis(text) {
+            // Estrazione fittizia di dati per scopi dimostrativi
+            const length = text.length;
+            return {
+                name: text.substring(0, 30) + (length > 30 ? '...' : ''),
+                cal: Math.floor(Math.random() * 400) + 100,
+                p: Math.floor(Math.random() * 20) + 5,
+                c: Math.floor(Math.random() * 40) + 10,
+                f: Math.floor(Math.random() * 15) + 2,
+                fi: Math.floor(Math.random() * 8) + 1
+            };
+        }
 
-    function save() {
-      localStorage.setItem(STORAGE, JSON.stringify(data));
-    }
+        function addMeal() {
+            const input = document.getElementById('meal-input');
+            if (!input.value) return;
 
-    function macrosTarget() {
-      const c = data.settings.calories;
-      return {
-        protein: Math.round((c * 0.30) / 4),
-        carbs: Math.round((c * 0.40) / 4),
-        fat: Math.round((c * 0.30) / 9)
-      };
-    }
+            const analysis = simulateAIAnalysis(input.value);
+            
+            if (!data[currentDate]) data[currentDate] = [];
+            data[currentDate].push({
+                ...analysis,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
 
-    function getEntries(date) {
-      return data.entries[date] || [];
-    }
+            localStorage.setItem('calotot_data', JSON.stringify(data));
+            input.value = '';
+            renderDailyStats();
+            renderMeals();
+        }
 
-    function render() {
-      const date = dayInput.value;
-      const entries = getEntries(date);
+        function renderDailyStats() {
+            const todayMeals = data[currentDate] || [];
+            const totals = todayMeals.reduce((acc, curr) => ({
+                cal: acc.cal + curr.cal,
+                p: acc.p + curr.p,
+                c: acc.c + curr.c,
+                f: acc.f + curr.f,
+                fi: acc.fi + curr.fi
+            }), { cal: 0, p: 0, c: 0, f: 0, fi: 0 });
 
-      document.getElementById('entries').innerHTML = entries.map(e => `
-        <div class="border rounded-xl p-3 mb-2">
-          <div class="font-medium">${e.meal} — ${e.food}</div>
-          <div class="text-sm text-slate-600">${e.cal} kcal · P ${e.protein}g · C ${e.carbs}g · G ${e.fat}g · F ${e.fiber}g</div>
-        </div>
-      `).join('');
+            const targetMacros = calculateMacros(settings.calories);
+            
+            const stats = [
+                { label: 'Calorie', val: totals.cal, target: settings.calories, unit: 'kcal', color: 'indigo' },
+                { label: 'Proteine', val: totals.p, target: targetMacros.p, unit: 'g', color: 'red' },
+                { label: 'Carbo', val: totals.c, target: targetMacros.c, unit: 'g', color: 'amber' },
+                { label: 'Grassi', val: totals.f, target: targetMacros.f, unit: 'g', color: 'blue' },
+                { label: 'Fibre', val: totals.fi, target: targetMacros.fi, unit: 'g', color: 'green' }
+            ];
 
-      const totals = entries.reduce((a, e) => ({
-        cal: a.cal + Number(e.cal),
-        protein: a.protein + Number(e.protein),
-        carbs: a.carbs + Number(e.carbs),
-        fat: a.fat + Number(e.fat),
-        fiber: a.fiber + Number(e.fiber)
-      }), { cal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
+            document.getElementById('daily-stats').innerHTML = stats.map(s => `
+                <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                    <p class="text-[10px] uppercase font-bold text-gray-400">${s.label}</p>
+                    <p class="text-lg font-bold text-${s.color}-600">${s.val}<span class="text-xs text-gray-400">/${s.target}</span></p>
+                    <div class="w-full bg-gray-100 h-1 rounded-full mt-1">
+                        <div class="bg-${s.color}-500 h-1 rounded-full" style="width: ${Math.min((s.val/s.target)*100, 100)}%"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-      const target = macrosTarget();
+        function renderMeals() {
+            const todayMeals = data[currentDate] || [];
+            document.getElementById('meals-list').innerHTML = todayMeals.map((m, index) => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div>
+                        <p class="font-medium text-gray-800">${m.name}</p>
+                        <p class="text-xs text-gray-500">${m.time} • P: ${m.p}g C: ${m.c}g F: ${m.f}g Fib: ${m.fi}g</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-bold text-indigo-600">${m.cal} kcal</span>
+                        <button onclick="deleteMeal(${index})" class="block text-[10px] text-red-400 hover:text-red-600">Elimina</button>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-      document.getElementById('summary').innerHTML = `
-        <div class="space-y-2 text-sm">
-          <div>Calorie: ${totals.cal} / ${data.settings.calories}</div>
-          <div>Proteine: ${totals.protein}g / ${target.protein}g</div>
-          <div>Carboidrati: ${totals.carbs}g / ${target.carbs}g</div>
-          <div>Grassi: ${totals.fat}g / ${target.fat}g</div>
-          <div>Fibre: ${totals.fiber}g</div>
-        </div>
-      `;
+        function deleteMeal(index) {
+            data[currentDate].splice(index, 1);
+            localStorage.setItem('calotot_data', JSON.stringify(data));
+            renderDailyStats();
+            renderMeals();
+        }
 
-      renderCalendar();
-    }
+        // Calendario
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const monthLabel = document.getElementById('calendar-month');
+            grid.innerHTML = '';
 
-    function renderCalendar() {
-      const keys = Object.keys(data.entries).sort();
-      document.getElementById('calendar').innerHTML = keys.map(d => {
-        const total = getEntries(d).reduce((a, e) => a + Number(e.cal), 0);
-        return `<div class="border rounded-lg p-2 mb-2">${d} — ${total} kcal</div>`;
-      }).join('') || '<p class="text-slate-500">Nessun dato ancora.</p>';
-    }
+            const year = calendarViewDate.getFullYear();
+            const month = calendarViewDate.getMonth();
+            
+            monthLabel.innerText = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(calendarViewDate);
 
-    document.getElementById('mealForm').addEventListener('submit', e => {
-      e.preventDefault();
-      const date = dayInput.value;
-      if (!data.entries[date]) data.entries[date] = [];
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-      data.entries[date].push({
-        meal: meal.value,
-        food: food.value,
-        cal: cal.value || 0,
-        protein: protein.value || 0,
-        carbs: carbs.value || 0,
-        fat: fat.value || 0,
-        fiber: fiber.value || 0
-      });
+            // Offset per lunedì (JS getDay è 0 per domenica)
+            const offset = firstDay === 0 ? 6 : firstDay - 1;
 
-      e.target.reset();
-      save();
-      render();
-    });
+            for (let i = 0; i < offset; i++) {
+                grid.innerHTML += `<div class="p-2"></div>`;
+            }
 
-    document.getElementById('saveSettings').addEventListener('click', () => {
-      data.settings.calories = Number(document.getElementById('targetCalories').value);
-      save();
-      render();
-    });
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const dayData = data[dateStr] || [];
+                const dayCals = dayData.reduce((acc, curr) => acc + curr.cal, 0);
+                const isOver = dayCals > settings.calories;
 
-    document.getElementById('exportBtn').addEventListener('click', () => {
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'calotot-export.json';
-      a.click();
-    });
+                grid.innerHTML += `
+                    <div class="calendar-day border rounded-lg p-1 text-left bg-white">
+                        <span class="text-xs font-bold ${dateStr === currentDate ? 'text-indigo-600' : 'text-gray-400'}">${d}</span>
+                        ${dayCals > 0 ? `
+                            <div class="mt-1">
+                                <div class="text-[10px] font-bold ${isOver ? 'text-red-500' : 'text-green-500'}">${dayCals} kcal</div>
+                                <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                                    <div class="h-full ${isOver ? 'bg-red-400' : 'bg-green-400'}" style="width: ${Math.min((dayCals/settings.calories)*100, 100)}%"></div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+        }
 
-    function estimateNutrition(text) {
-      const db = {
-        uova: { cal: 78, protein: 6.3, carbs: 0.6, fat: 5.3, fiber: 0 },
-        banana: { cal: 105, protein: 1.3, carbs: 27, fat: 0.4, fiber: 3.1 },
-        riso: { cal: 130, protein: 2.7, carbs: 28, fat: 0.3, fiber: 0.4 }
-      };
+        function changeMonth(dir) {
+            calendarViewDate.setMonth(calendarViewDate.getMonth() + dir);
+            renderCalendar();
+        }
 
-      const parts = text.toLowerCase().split(',');
-      const total = { cal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
+        function exportData() {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `calotot-export-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
 
-      parts.forEach(part => {
-        const qty = Number(part.match(/\d+/)?.[0] || 1);
-        Object.keys(db).forEach(name => {
-          if (part.includes(name)) {
-            const factor = name === 'riso' ? qty / 100 : qty;
-            total.cal += db[name].cal * factor;
-            total.protein += db[name].protein * factor;
-            total.carbs += db[name].carbs * factor;
-            total.fat += db[name].fat * factor;
-            total.fiber += db[name].fiber * factor;
-          }
-        });
-      });
+        function clearAllData() {
+            if(confirm('Sei sicuro di voler cancellare tutti i dati?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
 
-      return total;
-    }
-
-    document.getElementById('aiCalc').addEventListener('click', () => {
-      const text = document.getElementById('aiInput').value;
-      const result = estimateNutrition(text);
-      cal.value = Math.round(result.cal);
-      protein.value = Math.round(result.protein);
-      carbs.value = Math.round(result.carbs);
-      fat.value = Math.round(result.fat);
-      fiber.value = Math.round(result.fiber);
-      food.value = text;
-    });
-
-    dayInput.addEventListener('change', render);
-
-    render();
-  </script>
+        // Init
+        renderSettings();
+        renderDailyStats();
+        renderMeals();
+    </script>
 </body>
 </html>
